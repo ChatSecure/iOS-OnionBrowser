@@ -7,7 +7,7 @@
 //
 
 #import "TorWrapper.h"
-#import "AppDelegate.h"
+#import "OKAppDelegate.h"
 
 @implementation TorWrapper
 
@@ -23,7 +23,7 @@
 }
 
 -(void)main {
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    OKAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
     NSString *tmpDir = NSTemporaryDirectory();
     
     //NSString *base_torrc = [[NSBundle mainBundle] pathForResource:@"torrc" ofType:nil];

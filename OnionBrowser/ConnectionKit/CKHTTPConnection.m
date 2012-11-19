@@ -14,7 +14,7 @@
 //
 
 #import "CKHTTPConnection.h"
-#import "AppDelegate.h"
+#import "OKAppDelegate.h"
 
 
 // There is no public API for creating an NSHTTPURLResponse. The only way to create one then, is to
@@ -125,7 +125,7 @@
     
     _HTTPStream = (__bridge_transfer NSInputStream *)CFReadStreamCreateForHTTPRequest(NULL, [self HTTPRequest]);
 
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    OKAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
 
     // Ignore SSL errors for domains if user has explicitly said to "continue anyway"
     // (for self-signed certs)
@@ -340,7 +340,7 @@
                                                          kCFHTTPVersion1_1);
     //[NSMakeCollectable(result) autorelease];
     
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    OKAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
     Byte spoofUserAgent = appDelegate.spoofUserAgent;
 
     
