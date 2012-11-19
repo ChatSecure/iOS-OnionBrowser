@@ -16,3 +16,4 @@ profile
 dependencies/*
 dependencies-*/*
 .LSOverride
+.DS_Store
