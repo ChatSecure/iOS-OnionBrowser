@@ -8,7 +8,7 @@
 
 #import "BridgeEditViewController.h"
 #import "BridgeTableViewController.h"
-#import "AppDelegate.h"
+#import "OnionKit.h"
 
 @interface BridgeEditViewController ()
 
@@ -151,13 +151,13 @@
     UITableViewCell *titleCell = [self.tableView cellForRowAtIndexPath:titlePath];
     UITextField *titleEditField = (UITextField*)[titleCell viewWithTag:100];
     bridge.conf = titleEditField.text;
-    
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+
+    OnionKit *onionKit = [OnionKit sharedInstance];
     NSError *error = nil;
-    if (![appDelegate.managedObjectContext save:&error]) {
+    if (![[NSManagedObjectContext MR_contextForCurrentThread] save:&error]) {
         NSLog(@"Error updating bridge: %@ %@", error, [error userInfo]);
     }
-    [appDelegate.tor hupTor];
+    [onionKit.tor hupTor];
     [self dismissModalViewControllerAnimated:YES];
 }
 @end

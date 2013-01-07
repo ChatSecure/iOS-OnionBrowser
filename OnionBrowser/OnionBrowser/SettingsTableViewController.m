@@ -7,8 +7,9 @@
 //
 
 #import "SettingsTableViewController.h"
-#import "AppDelegate.h"
+#import "OnionKit.h"
 #import "BridgeTableViewController.h"
+#import "Bridge.h"
 
 @interface SettingsTableViewController ()
 
@@ -121,24 +122,24 @@
         }
     } else if (indexPath.section == 1) {
         // User-Agent
-        AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+        OnionKit *onionKit = [OnionKit sharedInstance];
         if (indexPath.row == 0) {
             cell.textLabel.text = @"No Spoofing: iOS Safari";
-            if (appDelegate.spoofUserAgent == UA_SPOOF_NO) {
+            if (onionKit.spoofUserAgent == UA_SPOOF_NO) {
                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
             } else {
                 cell.accessoryType = UITableViewCellAccessoryNone;
             }
         } else if (indexPath.row == 1) {
             cell.textLabel.text = @"Windows 7 (NT 6.1), Firefox 10";
-            if (appDelegate.spoofUserAgent == UA_SPOOF_WIN7_TORBROWSER) {
+            if (onionKit.spoofUserAgent == UA_SPOOF_WIN7_TORBROWSER) {
                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
             } else {
                 cell.accessoryType = UITableViewCellAccessoryNone;
             }
         } else if (indexPath.row == 2) {
             cell.textLabel.text = @"Mac OS X 10.8.1, Safari 6.0";
-            if (appDelegate.spoofUserAgent == UA_SPOOF_SAFARI_MAC) {
+            if (onionKit.spoofUserAgent == UA_SPOOF_SAFARI_MAC) {
                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
             } else {
                 cell.accessoryType = UITableViewCellAccessoryNone;
@@ -146,18 +147,18 @@
         }
     } else if (indexPath.section == 2) {
         // Pipelining
-        AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+        OnionKit *onionKit = [OnionKit sharedInstance];
         
         if (indexPath.row == 0) {
             cell.textLabel.text = @"Enabled (Better Performance)";
-            if (appDelegate.usePipelining == YES) {
+            if (onionKit.usePipelining == YES) {
                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
             } else {
                 cell.accessoryType = UITableViewCellAccessoryNone;
             }
         } else if (indexPath.row == 1) {
             cell.textLabel.text = @"Disabled (Better Compatibility)";
-            if (appDelegate.usePipelining == NO) {
+            if (onionKit.usePipelining == NO) {
                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
             } else {
                 cell.accessoryType = UITableViewCellAccessoryNone;
@@ -165,39 +166,27 @@
         }
     } else if (indexPath.section == 3) {
         // DNT
-        AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+        OnionKit *onionKit = [OnionKit sharedInstance];
         
         if (indexPath.row == 0) {
             cell.textLabel.text = @"No Header";
-            if (appDelegate.dntHeader == DNT_HEADER_UNSET) {
+            if (onionKit.dntHeader == DNT_HEADER_UNSET) {
                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
             } else {
                 cell.accessoryType = UITableViewCellAccessoryNone;
             }
         } else if (indexPath.row == 1) {
             cell.textLabel.text = @"Opt Out Of Tracking";
-            if (appDelegate.dntHeader == DNT_HEADER_NOTRACK) {
+            if (onionKit.dntHeader == DNT_HEADER_NOTRACK) {
                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
             } else {
                 cell.accessoryType = UITableViewCellAccessoryNone;
             }
         }
     } else if (indexPath.section == 4) {
-        AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-        
-        NSFetchRequest *request = [[NSFetchRequest alloc] init];
-        NSEntityDescription *entity = [NSEntityDescription entityForName:@"Bridge" inManagedObjectContext:appDelegate.managedObjectContext];
-        [request setEntity:entity];
-        
-        NSError *error = nil;
-        NSMutableArray *mutableFetchResults = [[appDelegate.managedObjectContext executeFetchRequest:request error:&error] mutableCopy];
-        if (mutableFetchResults == nil) {
-            // Handle the error.
-        }
-
         cell.selectionStyle = UITableViewCellSelectionStyleBlue;
         cell.textLabel.textAlignment = UITextAlignmentCenter;
-        NSUInteger numBridges = [mutableFetchResults count];
+        NSUInteger numBridges = [Bridge MR_countOfEntities];
         if (numBridges == 0) {
             cell.textLabel.text = @"Not Using Bridges";
         } else {
@@ -223,14 +212,14 @@
         }
     } else if (indexPath.section == 1) {
         // User-Agent
-        AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+        OnionKit *onionKit = [OnionKit sharedInstance];
         if (indexPath.row == 0) {
-            appDelegate.spoofUserAgent = UA_SPOOF_NO;
+            onionKit.spoofUserAgent = UA_SPOOF_NO;
         } else {
             if (indexPath.row == 1) {
-                appDelegate.spoofUserAgent = UA_SPOOF_WIN7_TORBROWSER;
+                onionKit.spoofUserAgent = UA_SPOOF_WIN7_TORBROWSER;
             } else if (indexPath.row == 2) {
-                appDelegate.spoofUserAgent = UA_SPOOF_SAFARI_MAC;
+                onionKit.spoofUserAgent = UA_SPOOF_SAFARI_MAC;
             }
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil 
                                                             message:[NSString stringWithFormat:@"User Agent spoofing enabled.\n\nNote that JavaScript cannot be disabled due to framework limitations. Scripts and other iOS features may still identify your browser.\n\nSome mobile or tablet websites may not work properly without the original mobile User Agent."]
@@ -241,17 +230,17 @@
         }
     } else if (indexPath.section == 2) {
         // Pipelining
-        AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+        OnionKit *onionKit = [OnionKit sharedInstance];
         if (indexPath.row == 0) {
-            appDelegate.usePipelining = YES;
+            onionKit.usePipelining = YES;
         } else if (indexPath.row == 1) {
-            appDelegate.usePipelining = NO;
+            onionKit.usePipelining = NO;
         }
     } else if (indexPath.section == 3) {
         // DNT
-        AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+        OnionKit *onionKit = [OnionKit sharedInstance];
         if (indexPath.row == 0) {
-            appDelegate.dntHeader = DNT_HEADER_UNSET;
+            onionKit.dntHeader = DNT_HEADER_UNSET;
         } else if (indexPath.row == 1) {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil 
                                                             message:[NSString stringWithFormat:@"Onion Browser will now send the 'DNT: 1' header. Note that because only very new browsers send this optional header, this opt-in feature may allow websites to uniquely identify you."]
@@ -259,13 +248,12 @@
                                                   cancelButtonTitle:@"OK" 
                                                   otherButtonTitles:nil];
             [alert show];
-            appDelegate.dntHeader = DNT_HEADER_NOTRACK;
+            onionKit.dntHeader = DNT_HEADER_NOTRACK;
         }
     } else if (indexPath.section == 4) {
-        AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
 
         BridgeTableViewController *bridgesVC = [[BridgeTableViewController alloc] initWithStyle:UITableViewStylePlain];
-        [bridgesVC setManagedObjectContext:[appDelegate managedObjectContext]];
+        [bridgesVC setManagedObjectContext:[NSManagedObjectContext MR_contextForCurrentThread]];
         
         UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:bridgesVC];
         navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;

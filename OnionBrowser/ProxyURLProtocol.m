@@ -98,13 +98,10 @@
          This is either "onionbrowser:start" or "onionbrowser:about".
          */
         NSURL *url;
-        NSString *resourcePath = [[NSBundle mainBundle] resourcePath];
-        resourcePath = [resourcePath stringByReplacingOccurrencesOfString:@"/" withString:@"//"];
-        resourcePath = [resourcePath stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
         if ([[[[self request] URL] absoluteString] rangeOfString:@"about"].location != NSNotFound) {
-            url = [NSURL URLWithString: [NSString stringWithFormat:@"file:/%@/about.html",resourcePath]];
+            url = [NSURL fileURLWithPath:[[NSBundle mainBundle]pathForResource:@"about" ofType:@"html"]];
         } else {
-            url = [NSURL URLWithString: [NSString stringWithFormat:@"file:/%@/startup.html",resourcePath]];
+            url = [NSURL fileURLWithPath:[[NSBundle mainBundle]pathForResource:@"startup" ofType:@"html"]];
         }
         NSMutableURLRequest *newRequest = [NSMutableURLRequest requestWithURL:url];
         [newRequest setAllHTTPHeaderFields:[[self request] allHTTPHeaderFields]];

@@ -7,10 +7,10 @@
 //
 
 #import "WebViewController.h"
-#import "AppDelegate.h"
 #import "BookmarkTableViewController.h"
 #import "SettingsViewController.h"
 #import "Bookmark.h"
+#import "OnionKit.h"
 #import "BridgeTableViewController.h"
 
 static const CGFloat kNavBarHeight = 52.0f;
@@ -111,13 +111,13 @@ static const Boolean kBackwardButton = NO;
         [loadingStatus removeFromSuperview];
     }
 
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    OnionKit *onionKit = [OnionKit sharedInstance];
 
     // Build request and go.
     _myWebView.delegate = self;
     _myWebView.scalesPageToFit = YES;
     NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:navigationURL];
-    [req setHTTPShouldUsePipelining:appDelegate.usePipelining];
+    [req setHTTPShouldUsePipelining:onionKit.usePipelining];
     [_myWebView loadRequest:req];
 
     _addressField.enabled = YES;
@@ -290,57 +290,57 @@ static const Boolean kBackwardButton = NO;
     loadingStatus.text = @"Connecting...\n\n\n\n\n";
     [self.view addSubview:loadingStatus];
     
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-    if (appDelegate.doPrepopulateBookmarks){
+    OnionKit *onionKit = [OnionKit sharedInstance];
+
+    if (onionKit.doPrepopulateBookmarks){
         [self prePopulateBookmarks];
     }
 }
 
 -(void) prePopulateBookmarks {
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-    
-    NSManagedObjectContext *context = [appDelegate managedObjectContext];
+    /*
+    NSManagedObjectContext *context = [NSManagedObjectContext MR_contextForCurrentThread];
 
     NSUInteger i = 0;
     
     Bookmark *bookmark;
     
-    bookmark = (Bookmark *)[NSEntityDescription insertNewObjectForEntityForName:@"Bookmark" inManagedObjectContext:context];
+    bookmark = [Bookmark MR_createEntity];
     [bookmark setTitle:@"The Tor Project (.onion)"];
     [bookmark setUrl:@"http://idnxcnkne4qt76tg.onion/"];
     [bookmark setOrder:i++];
     
-    bookmark = (Bookmark *)[NSEntityDescription insertNewObjectForEntityForName:@"Bookmark" inManagedObjectContext:context];
+    bookmark = [Bookmark MR_createEntity];
     [bookmark setTitle:@"Tor Project News (HTTPS)"];
     [bookmark setUrl:@"https://blog.torproject.org/"];
     [bookmark setOrder:i++];
     
-    bookmark = (Bookmark *)[NSEntityDescription insertNewObjectForEntityForName:@"Bookmark" inManagedObjectContext:context];
+    bookmark = [Bookmark MR_createEntity];
     [bookmark setTitle:@"The Cleaned Hidden Wiki (.onion)"];
     [bookmark setUrl:@"http://3suaolltfj2xjksb.onion/hiddenwiki/index.php/Main_Page"];
     [bookmark setOrder:i++];
     
-    bookmark = (Bookmark *)[NSEntityDescription insertNewObjectForEntityForName:@"Bookmark" inManagedObjectContext:context];
+    bookmark = [Bookmark MR_createEntity];
     [bookmark setTitle:@"The Tor Library (.onion)"];
     [bookmark setUrl:@"http://am4wuhz3zifexz5u.onion/"];
     [bookmark setOrder:i++];
 
-    bookmark = (Bookmark *)[NSEntityDescription insertNewObjectForEntityForName:@"Bookmark" inManagedObjectContext:context];
+    bookmark = [Bookmark MR_createEntity];
     [bookmark setTitle:@"Reddit /r/onions"];
     [bookmark setUrl:@"http://www.reddit.com/r/onions"];
     [bookmark setOrder:i++];
     
-    bookmark = (Bookmark *)[NSEntityDescription insertNewObjectForEntityForName:@"Bookmark" inManagedObjectContext:context];
+    bookmark = [Bookmark MR_createEntity];
     [bookmark setTitle:@"Reddit /r/netsec"];
     [bookmark setUrl:@"http://www.reddit.com/r/netsec"];
     [bookmark setOrder:i++];
     
-    bookmark = (Bookmark *)[NSEntityDescription insertNewObjectForEntityForName:@"Bookmark" inManagedObjectContext:context];
+    bookmark = [Bookmark MR_createEntity];
     [bookmark setTitle:@"Tor Mail (.onion)"];
     [bookmark setUrl:@"http://jhiwjjlqpyawmpjx.onion/"];
     [bookmark setOrder:i++];
     
-    bookmark = (Bookmark *)[NSEntityDescription insertNewObjectForEntityForName:@"Bookmark" inManagedObjectContext:context];
+    bookmark = [Bookmark MR_createEntity];
     [bookmark setTitle:@"RedditTor (.onion)"];
     [bookmark setUrl:@"http://gmyzy5exjw4pimvf.onion/"];
     [bookmark setOrder:i++];
@@ -349,6 +349,7 @@ static const Boolean kBackwardButton = NO;
     if (![context save:&error]) {
         NSLog(@"Error adding bookmarks: %@", error);
     }
+     */
 }
 
 
@@ -429,7 +430,7 @@ static const Boolean kBackwardButton = NO;
     }
     #ifdef DEBUG
     else {
-        NSLog(@"[WebViewController] uncaught error: %@", [error localizedDescription]);
+        NSLog(@"[WebViewController] uncaught error: %@%@", [error localizedDescription],[error userInfo]);
         NSLog(@"\t -> %@", error.domain);
     }
     #endif
@@ -438,12 +439,12 @@ static const Boolean kBackwardButton = NO;
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
     if (buttonIndex == 1) {
         // "Continue anyway" for SSL cert error
-        AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+        OnionKit *onionKit = [OnionKit sharedInstance];
 
         // Assumung URL in address bar is the one that caused this error.
         NSURL *url = [NSURL URLWithString:_currentURL];
         NSString *hostname = url.host;
-        [appDelegate.sslWhitelistedDomains addObject:hostname];
+        [onionKit.sslWhitelistedDomains addObject:hostname];
 
         UIAlertView* alertView = [[UIAlertView alloc]
                                   initWithTitle:@"Whitelisted Domain"
@@ -543,19 +544,17 @@ static const Boolean kBackwardButton = NO;
 # pragma mark Options Menu action sheet
 
 - (void)openOptionsMenu {
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-    if (![appDelegate.tor didFirstConnect]) {
+    OnionKit *onionKit = [OnionKit sharedInstance];
+    if (![onionKit.tor didFirstConnect]) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Opening Bridge Configuration"
                                                         message:@"This configuration is for advanced Tor users. It *may* help if you are having trouble getting past the initial \"Connecting...\" step.\n\nPlease visit the following link in another browser for instructions:\n\nhttp://onionbrowser.com/help/"
                                                        delegate:nil
                                               cancelButtonTitle:@"OK"
                                               otherButtonTitles:nil];
         [alert show];
-        
-        AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-        
+                
         BridgeTableViewController *bridgesVC = [[BridgeTableViewController alloc] initWithStyle:UITableViewStylePlain];
-        [bridgesVC setManagedObjectContext:[appDelegate managedObjectContext]];
+        [bridgesVC setManagedObjectContext:[NSManagedObjectContext MR_contextForCurrentThread]];
         
         UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:bridgesVC];
         navController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
@@ -570,8 +569,8 @@ static const Boolean kBackwardButton = NO;
             ////////////////////////////////////////////////////////
             // New Identity
             ////////////////////////////////////////////////////////
-            AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-            [appDelegate.tor requestNewTorIdentity];
+            OnionKit *onionKit = [OnionKit sharedInstance];
+            [onionKit.tor requestNewTorIdentity];
             
             NSHTTPCookie *cookie;
             NSHTTPCookieStorage *storage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
@@ -745,17 +744,17 @@ static const Boolean kBackwardButton = NO;
 
 - (void) addCurrentAsBookmark {
     if ((_currentURL != nil) && ![_currentURL isEqualToString:@""]) {
-        AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+        NSManagedObjectContext *context = [NSManagedObjectContext MR_contextForCurrentThread];
         NSFetchRequest *request = [[NSFetchRequest alloc] init];
-        NSEntityDescription *entity = [NSEntityDescription entityForName:@"Bookmark" inManagedObjectContext:appDelegate.managedObjectContext];
+        NSEntityDescription *entity = [NSEntityDescription entityForName:@"Bookmark" inManagedObjectContext:context];
         [request setEntity:entity];
         
         NSError *error = nil;
-        NSUInteger numBookmarks = [appDelegate.managedObjectContext countForFetchRequest:request error:&error];
+        NSUInteger numBookmarks = [context countForFetchRequest:request error:&error];
         if (error) {
             // error state?
         }
-        Bookmark *bookmark = (Bookmark *)[NSEntityDescription insertNewObjectForEntityForName:@"Bookmark" inManagedObjectContext:appDelegate.managedObjectContext];
+        Bookmark *bookmark = (Bookmark *)[NSEntityDescription insertNewObjectForEntityForName:@"Bookmark" inManagedObjectContext:context];
         
         NSString *pageTitle = [_myWebView stringByEvaluatingJavaScriptFromString:@"document.title"];
         [bookmark setTitle:pageTitle];
@@ -763,7 +762,7 @@ static const Boolean kBackwardButton = NO;
         [bookmark setOrder:numBookmarks];
         
         NSError *saveError = nil;
-        if (![appDelegate.managedObjectContext save:&saveError]) {
+        if (![context save:&saveError]) {
             NSLog(@"Error saving bookmark: %@", saveError);
         }
 
@@ -793,11 +792,7 @@ static const Boolean kBackwardButton = NO;
     UINavigationController *bookmarkNavController = [[UINavigationController alloc]
                                                      initWithRootViewController:bookmarksVC];
     
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-    
-    NSManagedObjectContext *context = [appDelegate managedObjectContext];
-    
-    bookmarksVC.managedObjectContext = context;
+    bookmarksVC.managedObjectContext = [NSManagedObjectContext MR_contextForCurrentThread];
     
     [self presentModalViewController:bookmarkNavController animated:YES];
 }

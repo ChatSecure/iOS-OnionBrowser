@@ -9,7 +9,7 @@
 #import "BookmarkTableViewController.h"
 #import "Bookmark.h"
 #import "BookmarkEditViewController.h"
-#import "AppDelegate.h"
+#import "OKAppDelegate.h"
 
 @interface BookmarkTableViewController ()
 
@@ -207,10 +207,10 @@
             NSArray *item = [[self presetBookmarks] objectAtIndex:indexPath.row];
             urlString = [item objectAtIndex:1];
         }
-        AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+        OKAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
         url = [NSURL URLWithString:urlString];
-        [appDelegate.appWebView loadURL:url];
-        [appDelegate.appWebView.addressField setText:urlString];
+        [appDelegate.webVC loadURL:url];
+        [appDelegate.webVC.addressField setText:urlString];
         [self goBack];
     }
 }
