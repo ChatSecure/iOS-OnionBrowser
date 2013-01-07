@@ -125,7 +125,7 @@
     
     _HTTPStream = (__bridge_transfer NSInputStream *)CFReadStreamCreateForHTTPRequest(NULL, [self HTTPRequest]);
 
-    OKAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    OnionKit *onionKit = [OnionKit sharedInstance];
 
     // Ignore SSL errors for domains if user has explicitly said to "continue anyway"
     // (for self-signed certs)
@@ -141,7 +141,7 @@
             #endif
             ignoreSSLErrors = YES;
         } else {
-            for (NSString *whitelistHost in appDelegate.sslWhitelistedDomains) {
+            for (NSString *whitelistHost in onionKit.sslWhitelistedDomains) {
                 if ([whitelistHost isEqualToString:URL.host]) {
                     #ifdef DEBUG
                         NSLog(@"%@ in SSL host whitelist ignoring SSL certificate status", URL.host);
@@ -161,7 +161,7 @@
     // Use tor proxy server
     NSString *hostKey = (NSString *)kCFStreamPropertySOCKSProxyHost;
     NSString *portKey = (NSString *)kCFStreamPropertySOCKSProxyPort;
-    NSUInteger proxyPortNumber = appDelegate.tor.torSocksPort;
+    NSUInteger proxyPortNumber = onionKit.tor.torSocksPort;
 
     NSMutableDictionary *proxyToUse = [NSMutableDictionary
                                        dictionaryWithObjectsAndKeys:@"127.0.0.1",hostKey,
@@ -340,8 +340,8 @@
                                                          kCFHTTPVersion1_1);
     //[NSMakeCollectable(result) autorelease];
     
-    OKAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-    Byte spoofUserAgent = appDelegate.spoofUserAgent;
+    OnionKit *onionKit = [OnionKit sharedInstance];
+    Byte spoofUserAgent = onionKit.spoofUserAgent;
 
     
     NSDictionary *HTTPHeaderFields = [self allHTTPHeaderFields];
@@ -369,7 +369,7 @@
                                          (__bridge CFStringRef)[HTTPHeaderFields objectForKey:aHTTPHeaderField]);
     }
     /* Do not track (DNT) header */
-    Byte dntHeader = appDelegate.dntHeader;
+    Byte dntHeader = onionKit.dntHeader;
     if (dntHeader != DNT_HEADER_UNSET) {
         // DNT_HEADER_CANTRACK is 0 and DNT_HEADER_NOTRACK is 1,
         // so we can pass that value in as the "DNT: X" value

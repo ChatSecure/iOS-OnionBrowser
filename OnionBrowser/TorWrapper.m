@@ -23,15 +23,15 @@
 }
 
 -(void)main {
-    OKAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    OnionKit *onionKit = [OnionKit sharedInstance];
     NSString *tmpDir = NSTemporaryDirectory();
     
     //NSString *base_torrc = [[NSBundle mainBundle] pathForResource:@"torrc" ofType:nil];
-    NSString *base_torrc = [[[appDelegate applicationDocumentsDirectory] URLByAppendingPathComponent:@"torrc"] relativePath];
+    NSString *base_torrc = [[[onionKit applicationDocumentsDirectory] URLByAppendingPathComponent:@"torrc"] relativePath];
     NSString *geoip = [[NSBundle mainBundle] pathForResource:@"geoip" ofType:nil];
     
-    NSString *controlPortStr = [NSString stringWithFormat:@"%d", appDelegate.tor.torControlPort];
-    NSString *socksPortStr = [NSString stringWithFormat:@"%d", appDelegate.tor.torSocksPort];
+    NSString *controlPortStr = [NSString stringWithFormat:@"%d", onionKit.tor.torControlPort];
+    NSString *socksPortStr = [NSString stringWithFormat:@"%d", onionKit.tor.torSocksPort];
     
     NSLog(@"%@ / %@", controlPortStr, socksPortStr);
     
