@@ -8,6 +8,7 @@
 
 #import "TorWrapper.h"
 #import "OKAppDelegate.h"
+#import "TorController.h"
 
 @implementation TorWrapper
 

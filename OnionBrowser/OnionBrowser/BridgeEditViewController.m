@@ -9,6 +9,7 @@
 #import "BridgeEditViewController.h"
 #import "BridgeTableViewController.h"
 #import "OnionKit.h"
+#import "TorController.h"
 
 @interface BridgeEditViewController ()
 

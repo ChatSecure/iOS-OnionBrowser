@@ -15,6 +15,7 @@
 
 #import "CKHTTPConnection.h"
 #import "OKAppDelegate.h"
+#import "TorController.h"
 
 
 // There is no public API for creating an NSHTTPURLResponse. The only way to create one then, is to

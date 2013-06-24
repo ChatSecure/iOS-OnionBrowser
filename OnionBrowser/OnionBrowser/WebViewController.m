@@ -12,6 +12,7 @@
 #import "Bookmark.h"
 #import "OnionKit.h"
 #import "BridgeTableViewController.h"
+#import "TorController.h"
 
 static const CGFloat kNavBarHeight = 52.0f;
 static const CGFloat kToolBarHeight = 44.0f;
