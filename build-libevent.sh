@@ -23,7 +23,7 @@
 #  Choose your libevent version and your currently-installed iOS SDK version:
 #
 VERSION="2.0.21-stable"
-SDKVERSION="6.0"
+SDKVERSION="6.1"
 #
 #
 ###########################################################################
@@ -107,7 +107,7 @@ do
     # Build the application and install it to the fake SDK intermediary dir
     # we have set up. Make sure to clean up afterward because we will re-use
     # this source tree to cross-compile other targets.
-	make -j2
+	make -j4
 	make install
 	make clean
 done

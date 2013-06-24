@@ -4,8 +4,8 @@ Official Site: http://onionbrowser.com/
 Support: http://onionbrowser.com/help/
 Changelog: https://raw.github.com/mtigas/iOS-OnionBrowser/master/CHANGES.txt
 
-(c) 2012 Mike Tigas
-http://mike.tig.as/
+(c) 2012-2013 Mike Tigas
+https://mike.tig.as/
 Twitter: @mtigas
 
 MIT License (See LICENSE file)
@@ -18,10 +18,10 @@ the Tor network (https://www.torproject.org/). See the official site
 
 ## Technical notes
 
-* OnionBrowser: 1.3.3 (20121207.1)
-* Tor: 0.2.3.25 (Nov 19 2012)
+* OnionBrowser: 1.3.6 (20130618.1)
+* Tor: 0.2.4.13-alpha (Jun 14 2013)
 * libevent: 2.0.21-stable (Nov 18 2012)
-* OpenSSL: 1.0.1c (May 10 2012)
+* OpenSSL: 1.0.1e (Feb 11 2013)
 
 The app, when compiled, contains static library versions of Tor and it's
 dependencies, libevent and openssl.
@@ -47,8 +47,8 @@ auto-validation of the uploaded binary. (The `_NSGetEnviron()` code does not
 even compile when using iPhoneSDK due to that function being undefined.)
 See the patch files in `build-patches/` if you are interested in the changes.
 
-    Tor 0.2.3.X changelog: https://gitweb.torproject.org/tor.git/blob/release-0.2.3:/ReleaseNotes
-    Tor manual: https://www.torproject.org/docs/tor-manual.html.en
+    Tor 0.2.4.X changelog: https://gitweb.torproject.org/tor.git/blob/tor-0.2.4.13-alpha:/ChangeLog
+    Tor manual: https://www.torproject.org/docs/tor-manual-dev.html.en
 
 0.2.3.17-beta introduced compiler and linker "hardening" (Tor ticket 5210),
 which is incompatible with the iOS Device build chain.  The app (when building
@@ -80,8 +80,9 @@ HTTP/HTTPS/DNS traffic in the browser, but seem to have misplaced them. You'll
 have to take my word for it or run your own tests.)
 
 The app uses Automatic Reference Counting (ARC) and was developed against
-iOS 5.X. (It *may* work when building against iOS 4.X, since most of the ARC
-behavior exists in that older SDK, with the notable exception of weakrefs.)
+iOS 5.X or greater. (It *may* work when building against iOS 4.X, since
+most of the ARC behavior exists in that older SDK, with the notable exception
+of weakrefs.)
 
 ## Building
 
