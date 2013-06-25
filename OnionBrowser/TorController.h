@@ -10,8 +10,17 @@
 #import "TorWrapper.h"
 #import "ULINetSocket.h"
 
+@protocol TorControllerDelegate <NSObject>
+
+- (void)torDidConnect;
+- (void)torConnectingWithMessage:(NSString *)message;
+- (void)torcontrolPortDidAuthenticate:(BOOL)didAuthenticate;
+
+@end
+
 @interface TorController : NSObject
 
+@property (nonatomic,strong) id <TorControllerDelegate> delegate;
 @property (nonatomic) NSUInteger controllerIsAuthenticated;
 @property (nonatomic) Boolean didFirstConnect;
 

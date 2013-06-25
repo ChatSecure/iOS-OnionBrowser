@@ -24,7 +24,8 @@
     torCheckLoopTimer = _torCheckLoopTimer,
     torStatusTimeoutTimer = _torStatusTimeoutTimer,
     mSocket = _mSocket,
-    controllerIsAuthenticated = _controllerIsAuthenticated
+    controllerIsAuthenticated = _controllerIsAuthenticated,
+    delegate
 ;
 
 -(id)init {
@@ -227,6 +228,11 @@
             NSLog(@"[tor] Control Port Authenticated Successfully" );
             #endif
             _controllerIsAuthenticated = YES;
+            
+            if([delegate respondsToSelector:@selector(torcontrolPortDidAuthenticate:)])
+            {
+                [delegate torcontrolPortDidAuthenticate:YES];
+            }
 
             [_mSocket writeString:@"getinfo status/bootstrap-phase\n" encoding:NSUTF8StringEncoding];
             _torCheckLoopTimer = [NSTimer scheduledTimerWithTimeInterval:0.15f
@@ -259,6 +265,10 @@
             } else {
                 // Otherwise, crash because we don't know the app's current state
                 // (since it hasn't totally initialized yet).
+                if([delegate respondsToSelector:@selector(torcontrolPortDidAuthenticate:)])
+                {
+                    [delegate torcontrolPortDidAuthenticate:NO];
+                }
                 exit(0);
             }
         }
@@ -272,6 +282,10 @@
                 // This is our first go-around (haven't loaded page into webView yet)
                 // but we are now at 100%, so go ahead.
                 //[wvc loadURL:[NSURL URLWithString:@"onionbrowser:start"]];
+                if([delegate respondsToSelector:@selector(torDidConnect)])
+                {
+                    [delegate torDidConnect];
+                }
                 didFirstConnect = YES;
                 
                 // See "checkTor call in middle of app" a little bit below.
@@ -283,6 +297,10 @@
             } else {
                 // Haven't done initial load yet and still waiting on bootstrap, so
                 // render status.
+                if([delegate respondsToSelector:@selector(torConnectingWithMessage:)])
+                {
+                    [delegate torConnectingWithMessage:msgIn];
+                }
                 //[wvc renderTorStatus:msgIn];
                 _torCheckLoopTimer = [NSTimer scheduledTimerWithTimeInterval:0.15f
                                                                       target:self
