@@ -265,13 +265,13 @@
     } else if ([msgIn rangeOfString:@"-status/bootstrap-phase="].location != NSNotFound) {
         // Response to "getinfo status/bootstrap-phase"
         
-        OKAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-        WebViewController *wvc = appDelegate.webVC;
+        //OKAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+        //WebViewController *wvc = appDelegate.webVC;
         if (!didFirstConnect) {
             if ([msgIn rangeOfString:@"BOOTSTRAP PROGRESS=100"].location != NSNotFound) {
                 // This is our first go-around (haven't loaded page into webView yet)
                 // but we are now at 100%, so go ahead.
-                [wvc loadURL:[NSURL URLWithString:@"onionbrowser:start"]];
+                //[wvc loadURL:[NSURL URLWithString:@"onionbrowser:start"]];
                 didFirstConnect = YES;
                 
                 // See "checkTor call in middle of app" a little bit below.
@@ -283,7 +283,7 @@
             } else {
                 // Haven't done initial load yet and still waiting on bootstrap, so
                 // render status.
-                [wvc renderTorStatus:msgIn];
+                //[wvc renderTorStatus:msgIn];
                 _torCheckLoopTimer = [NSTimer scheduledTimerWithTimeInterval:0.15f
                                                                       target:self
                                                                     selector:@selector(checkTor)
